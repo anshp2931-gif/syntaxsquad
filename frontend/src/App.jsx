@@ -7,6 +7,7 @@ import IntroScreen from './components/IntroScreen.jsx';
 import MainMenu from './components/menu/MainMenu.jsx';
 import Lobby from './components/lobby/Lobby.jsx';
 import { motion, AnimatePresence } from 'framer-motion';
+import { playClickSound, playHoverSound } from './audio/audioEngine.js';
 
 function AppContent() {
   const { state, actions, dispatch } = useGame();
@@ -58,24 +59,33 @@ function AppContent() {
             key="game"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            className="absolute inset-0 flex flex-col items-center justify-center bg-black z-50"
-            style={{ fontFamily: 'monospace' }}
+            className="absolute inset-0 flex flex-col items-center justify-center bg-black z-50 p-6"
           >
-            <h1 className="text-2xl md:text-4xl text-center px-4 tracking-wider" style={{ color: '#fff' }}>
+            <h1 
+              className="text-3xl md:text-5xl text-center px-4 tracking-wider mb-2 text-stone-100" 
+              style={{ fontFamily: 'var(--font-family-heading), Cinzel, serif' }}
+            >
               You have entered the mansion.
             </h1>
-            <p className="mt-6 text-sm" style={{ color: 'rgba(255,255,255,0.3)' }}>
+            <p 
+              className="text-stone-500 text-base" 
+              style={{ fontFamily: 'var(--font-family-body), Cormorant Garamond, serif' }}
+            >
               (demo ends here)
             </p>
             <button
               onClick={() => {
+                playClickSound();
                 actions.closeRoom();
                 window.location.href = '/';
               }}
-              className="mt-10 text-sm transition-colors duration-200"
-              style={{ color: 'rgba(255,255,255,0.4)', cursor: 'pointer', background: 'none', border: 'none', fontFamily: 'monospace' }}
+              onMouseEnter={playHoverSound}
+              className="horror-btn text-lg px-12 py-5 mt-10"
+              style={{
+                borderColor: 'rgba(184, 134, 11, 0.4)'
+              }}
             >
-              [return to menu]
+              Return to Menu
             </button>
           </motion.div>
         )}
