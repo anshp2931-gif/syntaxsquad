@@ -8,7 +8,6 @@ import ChatPanel from './ChatPanel.jsx';
 import LobbyHeader from './LobbyHeader.jsx';
 import CountdownOverlay from './CountdownOverlay.jsx';
 import { useVoice } from '../../contexts/VoiceContext.jsx';
-import AudioRenderer from '../common/AudioRenderer.jsx';
 
 function Lobby() {
   const { state, actions } = useGame();
@@ -179,8 +178,6 @@ function Lobby() {
           <CountdownOverlay count={state.countdown} />
         )}
       </AnimatePresence>
-
-      <AudioRenderer />
     </>
   );
 }

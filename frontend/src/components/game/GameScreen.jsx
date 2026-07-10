@@ -4,7 +4,6 @@ import { useVoice } from '../../contexts/VoiceContext.jsx';
 import { motion, AnimatePresence } from 'framer-motion';
 import { playClickSound, playHoverSound, setMuted } from '../../audio/audioEngine.js';
 import RoomExploration from './RoomExploration.jsx';
-import AudioRenderer from '../common/AudioRenderer.jsx';
 
 export default function GameScreen() {
   const { state, actions } = useGame();
@@ -263,8 +262,6 @@ export default function GameScreen() {
           ⚰️ Enter the Mansion
         </button>
       </div>
-
-      <AudioRenderer />
     </motion.div>
   );
 }
