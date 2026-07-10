@@ -81,7 +81,12 @@ DO NOT include any markdown formatting, markdown blocks, or plain text outside t
 
     const data = await response.json();
     try {
-      return JSON.parse(data.response);
+      let cleanResponse = data.response.trim();
+      // Remove markdown formatting if Llama includes it accidentally
+      if (cleanResponse.startsWith('```')) {
+        cleanResponse = cleanResponse.replace(/^```(?:json)?\s*/i, '').replace(/\s*```$/i, '');
+      }
+      return JSON.parse(cleanResponse);
     } catch (parseError) {
       console.error('Failed to parse JSON from Ollama. Raw response:', data.response);
       throw parseError;
