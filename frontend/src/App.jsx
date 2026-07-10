@@ -6,6 +6,7 @@ import AudioControls from './components/AudioControls.jsx';
 import IntroScreen from './components/IntroScreen.jsx';
 import MainMenu from './components/menu/MainMenu.jsx';
 import Lobby from './components/lobby/Lobby.jsx';
+import GameScreen from './components/game/GameScreen.jsx';
 import { motion, AnimatePresence } from 'framer-motion';
 
 function AppContent() {
@@ -53,32 +54,25 @@ function AppContent() {
           </motion.div>
         )}
 
-        {state.screen === 'game' && (
+        {state.screen === 'generating' && (
           <motion.div
-            key="game"
+            key="generating"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            className="absolute inset-0 flex flex-col items-center justify-center bg-black z-50"
-            style={{ fontFamily: 'monospace' }}
+            exit={{ opacity: 0 }}
+            className="absolute inset-0 flex flex-col items-center justify-center bg-black z-50 text-white font-mono text-center px-4"
           >
-            <h1 className="text-2xl md:text-4xl text-center px-4 tracking-wider" style={{ color: '#fff' }}>
-              You have entered the mansion.
+            <div className="w-16 h-16 border-t-2 border-red-500 rounded-full animate-spin mb-8 mx-auto opacity-70" />
+            <h1 className="text-xl md:text-2xl tracking-widest text-red-400">
+              The AI is weaving the story...
             </h1>
-            <p className="mt-6 text-sm" style={{ color: 'rgba(255,255,255,0.3)' }}>
-              (demo ends here)
+            <p className="mt-4 text-gray-500 text-sm">
+              Gathering clues, assigning roles, awakening the spirits.
             </p>
-            <button
-              onClick={() => {
-                actions.closeRoom();
-                window.location.href = '/';
-              }}
-              className="mt-10 text-sm transition-colors duration-200"
-              style={{ color: 'rgba(255,255,255,0.4)', cursor: 'pointer', background: 'none', border: 'none', fontFamily: 'monospace' }}
-            >
-              [return to menu]
-            </button>
           </motion.div>
         )}
+
+        {state.screen === 'game' && <GameScreen key="game" />}
       </AnimatePresence>
 
       {/* Global Kicked Overlay */}

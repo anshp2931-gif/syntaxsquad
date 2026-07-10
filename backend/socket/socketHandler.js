@@ -2,6 +2,7 @@ import { v4 as uuidv4 } from 'uuid';
 import Room from '../models/Room.js';
 import GameHistory from '../models/GameHistory.js';
 import { generateUniqueRoomCode, sanitizeString, validateRoomSettings } from '../utils/roomUtils.js';
+import { generateMysteryData } from '../utils/aiService.js';
 
 // Track socket -> player mapping for reconnection
 const socketPlayerMap = new Map();
@@ -393,6 +394,23 @@ export default function setupSocketHandlers(io) {
 
           if (count < 0) {
             clearInterval(countdownInterval);
+            
+            io.to(roomCode).emit('generating-mystery', { message: 'The AI is weaving the mystery...' });
+
+            try {
+              const mystery = await generateMysteryData(room.players);
+              if (mystery && mystery.suspects) {
+                mystery.suspects.forEach((suspect, index) => {
+                  if (room.players[index]) {
+                    suspect.playerId = room.players[index].playerId;
+                  }
+                });
+              }
+              room.mysteryData = mystery;
+            } catch (err) {
+              console.error('[Socket] AI Generation error:', err);
+            }
+
             room.status = 'in-progress';
             room.gameStartedAt = new Date();
             await room.save();
@@ -631,6 +649,7 @@ function formatRoomData(room) {
       type: m.type,
       timestamp: m.timestamp
     })),
+    mysteryData: room.mysteryData,
     createdAt: room.createdAt
   };
 }
