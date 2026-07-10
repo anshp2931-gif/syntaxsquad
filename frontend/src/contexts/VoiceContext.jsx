@@ -79,8 +79,8 @@ export function VoiceProvider({ children }) {
         token={token}
         serverUrl={serverUrl}
         connect={true}
-        // Force audio off initially for everyone
-        audio={false}
+        // Enable audio automatically upon joining
+        audio={true}
         video={false}
         options={{
           adaptiveStream: true,
@@ -109,7 +109,7 @@ export function VoiceProvider({ children }) {
 
   // Fallback context provider when not in a room, or waiting for token
   const fallbackValue = {
-    isMuted: true,
+    isMuted: false,
     toggleMute: () => console.log('[Voice] Cannot unmute outside a room'),
     micError: error,
     initMicrophone: () => Promise.resolve(null),

@@ -7,7 +7,7 @@ import { useLocalParticipant } from '@livekit/components-react';
  */
 export function useVoiceControls() {
   const { localParticipant } = useLocalParticipant();
-  const [isMuted, setIsMuted] = useState(true);
+  const [isMuted, setIsMuted] = useState(false);
   const [micError, setMicError] = useState(null);
 
   const toggleMute = useCallback(async () => {
