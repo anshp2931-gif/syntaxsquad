@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useGame } from '../../contexts/GameContext.jsx';
 import { useVoice } from '../../contexts/VoiceContext.jsx';
+import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { playClickSound, playHoverSound, setMuted } from '../../audio/audioEngine.js';
 import RoomExploration from './RoomExploration.jsx';
@@ -8,6 +9,7 @@ import RoomExploration from './RoomExploration.jsx';
 export default function GameScreen() {
   const { state, actions } = useGame();
   const { isMuted, toggleMute, micError } = useVoice();
+  const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState('role'); // role, location, suspects, timeline, clues
   const [phase, setPhase] = useState('briefing'); // briefing | exploring
   const [musicMuted, setMusicMuted] = useState(false);
@@ -87,7 +89,7 @@ export default function GameScreen() {
           <button
             onClick={() => {
               actions.closeRoom();
-              window.location.href = '/';
+              navigate('/menu');
             }}
             className="text-xs text-[color:var(--color-bone-dark)] hover:text-[color:var(--color-blood-glow)] transition-colors font-[family-name:var(--font-family-heading)] tracking-widest"
           >
