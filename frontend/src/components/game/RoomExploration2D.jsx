@@ -63,6 +63,23 @@ const PLAYER_SIZE = 40;
 const CLUE_SIZE = 30;
 const INTERACTION_RADIUS = 80;
 
+// Function to get cartoon avatar URL from DiceBear using player's avatar index
+function getAvatarUrl(avatarIndex, playerId) {
+  const styles = [
+    'adventurer',
+    'avataaars',
+    'fun-emoji',
+    'lorelei',
+    'notionists',
+    'personas',
+    'pixel-art',
+    'thumbs'
+  ];
+  const style = styles[avatarIndex % styles.length];
+  // Use playerId as seed for consistent avatar
+  return `https://api.dicebear.com/9.x/${style}/svg?seed=${encodeURIComponent(playerId)}&backgroundColor=transparent`;
+}
+
 export default function RoomExploration2D() {
   const { state, actions } = useGame();
   const mystery = state.room?.mysteryData;
@@ -278,6 +295,12 @@ export default function RoomExploration2D() {
     transition: 'transform 0.1s linear'
   };
 
+  // Get avatar index for a player
+  const getPlayerAvatarIndex = (playerId) => {
+    const player = state.room?.players?.find(p => p.playerId === playerId);
+    return player?.avatar ?? 0;
+  };
+
   // Determine which room the player is currently inside
   const currentRoom = useMemo(() => {
     const px = localPos.x + PLAYER_SIZE / 2;
@@ -425,7 +448,10 @@ export default function RoomExploration2D() {
         })}
 
         {/* Other Players Layer */}
-        {Object.entries(otherPlayers).map(([id, p]) => (
+      {Object.entries(otherPlayers).map(([id, p]) => {
+        const avatarIndex = getPlayerAvatarIndex(id);
+        const avatarUrl = getAvatarUrl(avatarIndex, id);
+        return (
           <div
             key={id}
             className="absolute transition-all duration-100 ease-linear flex flex-col items-center justify-center"
@@ -434,40 +460,49 @@ export default function RoomExploration2D() {
               top: p.y,
               width: PLAYER_SIZE,
               height: PLAYER_SIZE,
-              backgroundImage: `url(${playerSprite})`,
-              backgroundSize: 'contain',
-              backgroundRepeat: 'no-repeat',
-              backgroundPosition: 'center',
-              filter: 'drop-shadow(0 0 10px rgba(255,0,0,0.6))',
               zIndex: 10
             }}
           >
-             <div className="absolute -top-8 bg-black/60 px-2 py-1 rounded text-xs whitespace-nowrap text-gray-300">
-               {mystery?.suspects?.find(s => s.playerId === id)?.name || 'Unknown Guest'}
-             </div>
+            <img
+              src={avatarUrl}
+              alt="Player"
+              className="w-full h-full object-contain"
+              style={{ filter: 'drop-shadow(0 0 10px rgba(255,0,0,0.6))' }}
+            />
+            <div className="absolute -top-8 bg-black/60 px-2 py-1 rounded text-xs whitespace-nowrap text-gray-300">
+              {mystery?.suspects?.find(s => s.playerId === id)?.name || 'Unknown Guest'}
+            </div>
           </div>
-        ))}
+        );
+      })}
 
-        {/* Local Player Layer */}
-        <div
-          className="absolute flex flex-col items-center justify-center"
-          style={{
-            left: localPos.x,
-            top: localPos.y,
-            width: PLAYER_SIZE,
-            height: PLAYER_SIZE,
-            backgroundImage: `url(${playerSprite})`,
-            backgroundSize: 'contain',
-            backgroundRepeat: 'no-repeat',
-            backgroundPosition: 'center',
-            filter: 'drop-shadow(0 0 10px rgba(0,100,255,0.6))',
-            zIndex: 20
-          }}
-        >
-           <div className="absolute -top-8 bg-black/60 px-2 py-1 rounded text-xs whitespace-nowrap text-white border border-blue-900/50">
-             {mystery?.suspects?.find(s => s.playerId === state.playerId)?.name || 'You'} (You)
-           </div>
-        </div>
+      {/* Local Player Layer */}
+      {(() => {
+        const myAvatarIndex = getPlayerAvatarIndex(state.playerId);
+        const myAvatarUrl = getAvatarUrl(myAvatarIndex, state.playerId);
+        return (
+          <div
+            className="absolute flex flex-col items-center justify-center"
+            style={{
+              left: localPos.x,
+              top: localPos.y,
+              width: PLAYER_SIZE,
+              height: PLAYER_SIZE,
+              zIndex: 20
+            }}
+          >
+            <img
+              src={myAvatarUrl}
+              alt="Me"
+              className="w-full h-full object-contain"
+              style={{ filter: 'drop-shadow(0 0 10px rgba(0,100,255,0.6))' }}
+            />
+            <div className="absolute -top-8 bg-black/60 px-2 py-1 rounded text-xs whitespace-nowrap text-white border border-blue-900/50">
+              {mystery?.suspects?.find(s => s.playerId === state.playerId)?.name || 'You'} (You)
+            </div>
+          </div>
+        );
+      })()}
       </div>
 
       {/* UI Overlay */}
